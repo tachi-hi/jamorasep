@@ -44,7 +44,7 @@ setup(
     long_description=_readme(),
     include_package_data=True,
     keywords='jpyomi',
-    name='morasep',
+    name='jamorasep',
     packages=find_packages(include=['jamorasep', 'jamorasep.*']),
     setup_requires=setup_requirements,
     test_suite='tests',
