@@ -1,6 +1,6 @@
 
-py2shpss
-========
+jamorasep
+=========
 
 
 .. image:: https://img.shields.io/pypi/v/jamorasep.svg
@@ -38,7 +38,7 @@ Code Example
 
    # import
    import jamorasep
-   jamorasep.parse("こんにちは", output_format="katakana")
-   jamorasep.parse("こんにちは", output_format="simple-ipa")
-   jamorasep.parse("こんにちは", output_format="kunrei")
-   jamorasep.parse("こんにちは", output_format="hepburn")
+   jamorasep.parse("シャンプーハット", output_format="katakana")
+   jamorasep.parse("シャンプーハット", output_format="simple-ipa")
+   jamorasep.parse("シャンプーハット", output_format="kunrei")
+   jamorasep.parse("シャンプーハット", output_format="hepburn")
