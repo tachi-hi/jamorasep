@@ -7,6 +7,10 @@ jamorasep
    :target: https://pypi.python.org/pypi/jamorasep
    :alt: pypi
 
+.. image:: https://readthedocs.org/projects/jamorasep/badge/?version=latest
+   :target: https://jamorasep.readthedocs.io/en/latest
+   :alt: Documentation Status
+
 .. image:: https://github.com/tachi-hi/jamorasep/actions/workflows/test.yml/badge.svg
    :target: https://github.com/tachi-hi/jamorasep/actions/workflows/test.yml
    :alt: CI
