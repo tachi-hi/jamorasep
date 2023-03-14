@@ -2,38 +2,11 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
-import pandas as pd
+import csv
 from typing import List
+from .kana_util import h2k, k2h
 
-def h2k(text : str = ""):
-    """Convert hiragana to katakana.
-    Characters other than hiragana are not converted.
-    Only Unicode is supported, which is the default code in Python3.
-
-    Args:
-        text (str): hiragana string
-    Returns:
-        str: katakana string
-    """
-    return ''.join([chr(ord(char)+0x60) if ord(char)>=0x3041 and ord(char)<=0x3097 else char for char in text])
-    # return ''.join([chr(ord(char)+96) if ord(char)>=12353 and ord(char)<=12439 else char for char in text])
-
-def k2h(text : str = ""):
-    """Convert katakana to hiragana.
-    Characters other than katakana are not converted.
-    Only Unicode is supported, which is the default code in Python3.
-    Hankaku katakana will not be converted.
-    Some special katakana such as ヸ will not be converted, too.
-
-    Args:
-        text (str): katakana string
-    Returns:
-        str: hiragana string
-    """
-    return ''.join([chr(ord(char)-0x60) if ord(char)>=0x30A1 and ord(char)<=0x30F7 else char for char in text])
-    # return ''.join([chr(ord(char)-96) if ord(char)>=12449 and ord(char)<=12535 else char for char in text])
-
-class Kanamap:
+class Kanamap_old:
     def __init__(self, kanamap_csv : str = None):
         self.kanamap = self.load_kanamap(kanamap_csv)
 
@@ -56,6 +29,34 @@ class Kanamap:
 
     def header(self):
         return self.kanamap.columns
+
+#implement the same class without using pandas
+class Kanamap:
+    def __init__(self, kanamap_csv : str = None):
+        self.kanamap = self.load_kanamap(kanamap_csv)
+
+    def load_kanamap(self, kanamap_csv : str = None):
+        if kanamap_csv is None:
+            path = os.path.dirname(os.path.abspath(__file__))
+            kanamap_csv = f"{path}/resource/kanamap.csv"
+        kanamap = {}
+        with open(kanamap_csv, "r") as f:
+            csv_ = csv.DictReader(f)
+            for row in csv_:
+                kanamap[row["katakana"]] = row
+        return kanamap
+
+    def __call__(self, kana):
+        return self.kanamap[kana]
+
+    def get_2letter_morae(self):
+        return list(filter(lambda x: len(x) == 2, self.kanamap.keys()))
+
+    def lst_katakana(self):
+        return self.kanamap.keys()
+
+    def header(self):
+        return self.kanamap[list(self.kanamap.keys())[0]].keys()
 
 class Morasep:
     def __init__(self, kanamap_csv : str = None):

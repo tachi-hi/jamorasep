@@ -4,27 +4,6 @@ from jamorasep import parse
 
 
 class TestJpmorasep(unittest.TestCase):
-    def test_h2k(self):
-        self.assertEqual(jamorasep.h2k('あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん'),
-                         'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン')
-        self.assertEqual(jamorasep.h2k('がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽゔ'),
-                         'ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポヴ')
-        self.assertEqual(jamorasep.h2k('ーっ'), 'ーッ')
-        self.assertEqual(jamorasep.h2k('ぁぃぅぇぉゃゅょゎ'), 'ァィゥェォャュョヮ')
-        self.assertEqual(jamorasep.h2k('ゐゑ'), 'ヰヱ')
-        self.assertEqual(jamorasep.h2k('ゕゖ'), 'ヵヶ')
-        self.assertEqual(jamorasep.h2k('abc123一二三,.、。「」'), 'abc123一二三,.、。「」')
-
-    def test_k2h(self):
-        self.assertEqual(jamorasep.k2h('アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'),
-                         'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん')
-        self.assertEqual(jamorasep.k2h('ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポヴ'),
-                         'がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽゔ')
-        self.assertEqual(jamorasep.k2h('ーッ'), 'ーっ')
-        self.assertEqual(jamorasep.k2h('ァィゥェォャュョヮ'), 'ぁぃぅぇぉゃゅょゎ')
-        self.assertEqual(jamorasep.k2h('ヰヱ'), 'ゐゑ')
-        self.assertEqual(jamorasep.k2h('ヵヶ'), 'ゕゖ')
-        self.assertEqual(jamorasep.h2k('abc123一二三,.、。「」'), 'abc123一二三,.、。「」')
 
     def test_katakana(self):
         self.assertEqual(parse('アイウエオ'), ['ア', 'イ', 'ウ', 'エ', 'オ'])
