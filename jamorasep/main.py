@@ -15,7 +15,7 @@ class Kanamap:
             path = os.path.dirname(os.path.abspath(__file__))
             kanamap_csv = f"{path}/resource/kanamap.csv"
         kanamap = {}
-        with open(kanamap_csv, "r") as f:
+        with open(kanamap_csv, "r", encoding="utf-8") as f:
             csv_ = csv.DictReader(f)
             for row in csv_:
                 kanamap[row["katakana"]] = row
