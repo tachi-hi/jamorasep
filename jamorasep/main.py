@@ -6,31 +6,6 @@ import csv
 from typing import List
 from .kana_util import h2k, k2h
 
-class Kanamap_old:
-    def __init__(self, kanamap_csv : str = None):
-        self.kanamap = self.load_kanamap(kanamap_csv)
-
-    def load_kanamap(self, kanamap_csv : str = None):
-        if kanamap_csv is None:
-            path = os.path.dirname(os.path.abspath(__file__))
-            kanamap_csv = f"{path}/resource/kanamap.csv"
-        kanamap = pd.read_csv(kanamap_csv,index_col=0)
-        kanamap.fillna(False, inplace=True)
-        return kanamap
-
-    def __call__(self, kana):
-        return self.kanamap.loc[kana].to_dict()
-
-    def get_2letter_morae(self):
-        return list(filter(lambda x: len(x) == 2, self.kanamap.index.to_list()))
-
-    def lst_katakana(self):
-        return self.kanamap.index
-
-    def header(self):
-        return self.kanamap.columns
-
-#implement the same class without using pandas
 class Kanamap:
     def __init__(self, kanamap_csv : str = None):
         self.kanamap = self.load_kanamap(kanamap_csv)
@@ -56,7 +31,7 @@ class Kanamap:
         return self.kanamap.keys()
 
     def header(self):
-        return self.kanamap[list(self.kanamap.keys())[0]].keys()
+        return self.kanamap["ア"].keys()
 
 class Morasep:
     def __init__(self, kanamap_csv : str = None):
