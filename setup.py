@@ -28,7 +28,7 @@ setup(
     author_email='h_tachibana@pkshatec.com',
     python_requires='>=3.5',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: Japanese',

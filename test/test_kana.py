@@ -1,7 +1,7 @@
 import unittest
 import jamorasep
 
-class TestJpmorasep(unittest.TestCase):
+class TestKanaUtil(unittest.TestCase):
     def test_h2k(self):
         self.assertEqual(jamorasep.h2k('あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん'),
                          'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン')
