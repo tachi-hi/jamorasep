@@ -41,16 +41,20 @@ class Morasep:
         self.upper = {c : chr(ord(c) + 1) for c in self.subscript} # "ァ" -> "ア" etc.
 
     def _is_mora_with_subs(self, i: str, j: str) -> bool:
+        """Check if the successive 2 characters compose a mora (e.g., "キャ")."""
         I, J = h2k(i), h2k(j)
         return I + J in self.two_letter_morae
 
     def _handle_rule1(self, i: str, j: str) -> List[str]:
+        """Handle the case where the 2 characters do not form a mora (e.g., "カァ")."""
         return [i, self.upper[j]]
 
     def _handle_rule3(self, i: str, j: str) -> List[str]:
+        """Handle the case where the first character is small and the second is also small (e.g., "ァァ")."""
         return [self.upper[j]]
 
     def _handle_default_case(self, i: str) -> List[str]:
+        """Handle the default case where only the first character is returned."""
         return [i]
 
     def check_if_successive_2chars_compose_mora(self, i: str, j: str) -> List[str]:
@@ -123,7 +127,7 @@ class Morasep:
             if phoneme:
                 ret = list("".join(ret))
         else:
-            raise ValueError(f"output_format {output_format} is not supported.")
+            raise ValueError(f"output_format '{output_format}' is not supported. Valid options are 'katakana', 'hiragana', or a column name in kanamap.csv")
         return ret
 
     def parse(self, txt : str ="", **kwargs) -> List[str]:
