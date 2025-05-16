@@ -11,7 +11,6 @@ def h2k(text : str = "") -> str:
         str: katakana string
     """
     return ''.join([chr(ord(char)+0x60) if ord(char)>=0x3041 and ord(char)<=0x3097 else char for char in text])
-    # return ''.join([chr(ord(char)+96) if ord(char)>=12353 and ord(char)<=12439 else char for char in text])
 
 def k2h(text : str = "") -> str:
     """Convert katakana to hiragana.
@@ -26,7 +25,6 @@ def k2h(text : str = "") -> str:
         str: hiragana string
     """
     return ''.join([chr(ord(char)-0x60) if ord(char)>=0x30A1 and ord(char)<=0x30F7 else char for char in text])
-    # return ''.join([chr(ord(char)-96) if ord(char)>=12449 and ord(char)<=12535 else char for char in text])
 
 def is_hiragana(text : Union[str, List[str]] = "") -> bool:
     """Check if the input is hiragana.
