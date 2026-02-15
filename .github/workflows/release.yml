@@ -1,0 +1,43 @@
+name: Auto Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'jamorasep/__init__.py'
+
+jobs:
+  check-and-release:
+    name: Create release if version changed
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Get version from __init__.py
+      id: get_version
+      run: |
+        VERSION=$(python -c "import re; print(re.search(r\"__version__\s*=\s*['\"]([^'\"]*)['\"]\" , open('jamorasep/__init__.py').read()).group(1))")
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        echo "Detected version: $VERSION"
+
+    - name: Check if tag already exists
+      id: check_tag
+      run: |
+        if git rev-parse "v${{ steps.get_version.outputs.version }}" >/dev/null 2>&1; then
+          echo "exists=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "exists=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Create release
+      if: steps.check_tag.outputs.exists == 'false'
+      run: |
+        gh release create "v${{ steps.get_version.outputs.version }}" \
+          --title "v${{ steps.get_version.outputs.version }}" \
+          --generate-notes
+      env:
+        GH_TOKEN: ${{ github.token }}
