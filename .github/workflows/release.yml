@@ -20,7 +20,12 @@ jobs:
     - name: Get version from __init__.py
       id: get_version
       run: |
-        VERSION=$(python -c "import re; print(re.search(r\"__version__\s*=\s*['\"]([^'\"]*)['\"]\" , open('jamorasep/__init__.py').read()).group(1))")
+        VERSION=$(python3 -c '
+        import re
+        text = open("jamorasep/__init__.py").read()
+        m = re.search(r"__version__\s*=\s*[\x27\x22]([^\x27\x22]*)[\x27\x22]", text)
+        print(m.group(1))
+        ')
         echo "version=$VERSION" >> "$GITHUB_OUTPUT"
         echo "Detected version: $VERSION"
 
