@@ -1,6 +1,6 @@
 from typing import Union, List
 
-def h2k(text : str = ""):
+def h2k(text : str = "") -> str:
     """Convert hiragana to katakana.
     Characters other than hiragana are not converted.
     Only Unicode is supported, which is the default code in Python3.
@@ -11,9 +11,8 @@ def h2k(text : str = ""):
         str: katakana string
     """
     return ''.join([chr(ord(char)+0x60) if ord(char)>=0x3041 and ord(char)<=0x3097 else char for char in text])
-    # return ''.join([chr(ord(char)+96) if ord(char)>=12353 and ord(char)<=12439 else char for char in text])
 
-def k2h(text : str = ""):
+def k2h(text : str = "") -> str:
     """Convert katakana to hiragana.
     Characters other than katakana are not converted.
     Only Unicode is supported, which is the default code in Python3.
@@ -26,9 +25,8 @@ def k2h(text : str = ""):
         str: hiragana string
     """
     return ''.join([chr(ord(char)-0x60) if ord(char)>=0x30A1 and ord(char)<=0x30F7 else char for char in text])
-    # return ''.join([chr(ord(char)-96) if ord(char)>=12449 and ord(char)<=12535 else char for char in text])
 
-def is_hiragana(text : Union[str, List[str]] = ""):
+def is_hiragana(text : Union[str, List[str]] = "") -> bool:
     """Check if the input is hiragana.
     Only Unicode is supported, which is the default code in Python3.
 
@@ -41,7 +39,7 @@ def is_hiragana(text : Union[str, List[str]] = ""):
         text = ''.join(text)
     return all([ord(char)>=0x3041 and ord(char)<=0x3097 for char in text])
 
-def is_katakana(text : Union[str, List[str]] = ""):
+def is_katakana(text : Union[str, List[str]] = "") -> bool:
     """Check if the input is katakana.
     Only Unicode is supported, which is the default code in Python3.
 
@@ -54,7 +52,7 @@ def is_katakana(text : Union[str, List[str]] = ""):
         text = ''.join(text)
     return all([ord(char)>=0x30A1 and ord(char)<=0x30F7 for char in text])
 
-def is_kana(text : Union[str, List[str]] = ""):
+def is_kana(text : Union[str, List[str]] = "") -> bool:
     """Check if the input is hiragana or katakana.
     Only Unicode is supported, which is the default code in Python3.
 
