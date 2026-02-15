@@ -3,14 +3,14 @@
 import sys
 import os
 import csv
-from typing import List, Union, Dict
+from typing import List, Dict, Optional
 from .kana_util import h2k, k2h
 
 class Kanamap:
-    def __init__(self, kanamap_csv : Union[str, None] = None) -> None:
+    def __init__(self, kanamap_csv: Optional[str] = None) -> None:
         self.kanamap = self.load_kanamap(kanamap_csv)
 
-    def load_kanamap(self, kanamap_csv : Union[str, None] = None) -> Dict:
+    def load_kanamap(self, kanamap_csv: Optional[str] = None) -> Dict[str, Dict[str, str]]:
         if kanamap_csv is None:
             path = os.path.dirname(os.path.abspath(__file__))
             kanamap_csv = f"{path}/resource/kanamap.csv"
@@ -21,51 +21,46 @@ class Kanamap:
                 kanamap[row["katakana"]] = row
         return kanamap
 
-    def __call__(self, kana: str) -> Dict:
+    def __call__(self, kana: str) -> Dict[str, str]:
         return self.kanamap[kana]
 
     def get_2letter_morae(self) -> List[str]:
         return list(filter(lambda x: len(x) == 2, self.kanamap.keys()))
 
     def lst_katakana(self) -> List[str]:
-        return self.kanamap.keys()
+        return list(self.kanamap.keys())
 
     def header(self) -> List[str]:
-        return self.kanamap["ア"].keys()
+        return list(self.kanamap["ア"].keys())
 
 class Morasep:
-    def __init__(self, kanamap_csv : Union[str, None] = None) -> None:
+    def __init__(self, kanamap_csv: Optional[str] = None) -> None:
         self.kanamap = Kanamap(kanamap_csv)
         self.two_letter_morae = self.kanamap.get_2letter_morae()
         self.subscript = list("ァィゥェォャュョヮぁぃぅぇぉゃゅょゎ")
-        self.upper = {c : chr(ord(c) + 1) for c in self.subscript} # "ァ" -> "ア" etc.
-
-    def _is_mora_with_subs(self, i: str, j: str) -> bool:
-        """Check if the successive 2 characters compose a mora (e.g., "キャ")."""
-        I, J = h2k(i), h2k(j)
-        return I + J in self.two_letter_morae
-
-    def _handle_rule1(self, i: str, j: str) -> List[str]:
-        """Handle the case where the 2 characters do not form a mora (e.g., "カァ")."""
-        return [i, self.upper[j]]
-
-    def _handle_rule3(self, i: str, j: str) -> List[str]:
-        """Handle the case where the first character is small and the second is also small (e.g., "ァァ")."""
-        return [self.upper[j]]
-
-    def _handle_default_case(self, i: str) -> List[str]:
-        """Handle the default case where only the first character is returned."""
-        return [i]
+        self.upper = {c: chr(ord(c) + 1) for c in self.subscript}  # "ァ" -> "ア" etc.
 
     def check_if_successive_2chars_compose_mora(self, i: str, j: str) -> List[str]:
+        """Check if the successive 2 characters compose a mora.
+
+        If so, return the mora. If not, return the list of morae
+        depending on the relationship between the 2 characters.
+
+        Rules:
+            RULE 0: i + j forms a known two-letter mora (e.g., "キャ", "シュ")
+            RULE 1: i is normal kana + j is subscript but not a valid mora -> convert subscript to normal (e.g., "カァ" -> ["カ", "ア"])
+            RULE 2: i is subscript + j is normal kana -> return [] (handled by previous pair)
+            RULE 3: i is subscript + j is subscript -> convert j to normal (e.g., "ァァ" -> ["ア"])
+            RULE 4: Otherwise -> return [i]
+        """
         I, J = h2k(i), h2k(j)
 
-        if self._is_mora_with_subs(i, j):
+        if I + J in self.two_letter_morae:
             # Rule 0
             return [i + j]
         elif ((not I in self.subscript) and (    J in self.subscript)):
             # Rule 1
-            return self._handle_rule1(i, j)
+            return [i, self.upper[j]]
         elif ((    I in self.subscript) and (not J in self.subscript)):
             # Rule 2
             return []
@@ -74,9 +69,22 @@ class Morasep:
             return [self.upper[j]]
         else:
             # Rule 4
-            return self._handle_default_case(i)
+            return [i]
 
-    def kana2mora(self, txt : str) -> List[str]:
+    def kana2mora(self, txt: str) -> List[str]:
+        """Convert a string of Japanese text (hiragana or katakana) into a list of morae.
+
+        Symbols and characters other than hiragana/katakana are separated
+        character-wise and returned without modification.
+
+        Example:
+            "あいうえお・きゃきゅきょ" -> ["あ", "い", "う", "え", "お", "・", "きゃ", "きゅ", "きょ"]
+
+        Args:
+            txt: A string of Japanese text (hiragana or katakana).
+        Returns:
+            A list of morae.
+        """
         bos_token = "[BOS]"
         eos_token = "[EOS]"
         lst = [bos_token] + list(txt) + [eos_token]
@@ -87,6 +95,17 @@ class Morasep:
         return morae
 
     def modify_special_mora(self, morae: List[str]) -> List[str]:
+        """Modify Q (ッ) in a romanized mora list.
+
+        - If Q is the last mora, replace with a space.
+        - If the next mora starts with a consonant, replace Q with that consonant.
+        - If the next mora starts with a vowel or symbol, replace Q with a space.
+
+        Args:
+            morae: A list of morae.
+        Returns:
+            A list of morae with Q replaced.
+        """
         for i in range(len(morae) - 1, -1, -1):
             if morae[i] == "Q":
                 if i == len(morae) - 1:
@@ -103,7 +122,7 @@ class Morasep:
         return morae
 
     def _convert_to_hiragana(self, lst: List[str]) -> List[str]:
-        map_f = lambda _ : k2h(_) if _ in self.kanamap.lst_katakana() else _
+        map_f = lambda _: k2h(_) if _ in self.kanamap.lst_katakana() else _
         return list(map(map_f, lst))
 
     def _convert_to_katakana(self, lst: List[str]) -> List[str]:
@@ -117,7 +136,18 @@ class Morasep:
             morae = self.modify_special_mora(morae)
         return morae
 
-    def convert_lst_of_mora(self, lst : List[str], output_format="katakana", phoneme=False) -> List[str]:
+    def convert_lst_of_mora(self, lst: List[str], output_format: str = "katakana", phoneme: bool = False) -> List[str]:
+        """Convert a list of morae into katakana, hiragana, or other formats.
+
+        Args:
+            lst: A list of morae.
+            output_format: The output format. Options are "katakana", "hiragana",
+                and any column in kanamap.csv (e.g., "kunrei", "hepburn", "simple-ipa").
+            phoneme: If True, split the output into individual phonemes.
+                Only effective when output_format is a romanization format.
+        Returns:
+            A list of morae in the specified format.
+        """
         if output_format == "hiragana":
             ret = self._convert_to_hiragana(lst)
         elif output_format == "katakana":
@@ -130,9 +160,24 @@ class Morasep:
             raise ValueError(f"output_format '{output_format}' is not supported. Valid options are 'katakana', 'hiragana', or a column name in kanamap.csv")
         return ret
 
-    def parse(self, txt : str ="", **kwargs) -> List[str]:
-        output_format = kwargs["output_format"] if "output_format" in kwargs else None
-        phoneme = kwargs["phoneme"] if "phoneme" in kwargs else False
+    def parse(self, txt: str = "", output_format: Optional[str] = None, phoneme: bool = False, **kwargs) -> List[str]:
+        """Convert a kana string into a list of morae.
+
+        Args:
+            txt: A string of katakana or hiragana.
+            output_format: The output format. If None, return morae as-is.
+                Options are "katakana", "hiragana", and any column in kanamap.csv
+                (e.g., "kunrei", "hepburn", "simple-ipa").
+            phoneme: If True, split the output into individual phonemes.
+        Returns:
+            A list of morae.
+        """
+        # Support legacy kwargs interface
+        if output_format is None and "output_format" in kwargs:
+            output_format = kwargs["output_format"]
+        if not phoneme and "phoneme" in kwargs:
+            phoneme = kwargs["phoneme"]
+
         sep = self.kana2mora(txt)
         if not output_format:
             return sep
