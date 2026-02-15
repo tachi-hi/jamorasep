@@ -2,7 +2,7 @@ __copyright__ = 'Copyright (C) 2023 Hideyuki Tachibana.'
 __version__ = '0.0.1'
 __license__ = 'MIT'
 __author__ = 'Hideyuki Tachibana'
-__author_email__ = 'h_tachibana@pkshatech.com'
+__author_email__ = 'tachi-hi@users.noreply.github.com'
 
 __all__ = ['main', 'kana_util']
 
