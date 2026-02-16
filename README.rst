@@ -56,3 +56,5 @@ Code Example
 
    jamorasep.parse("シャンプーハット", output_format="hepburn")
    # => ['sha', 'n', 'pu', ':', 'ha', 't', 'to']
+
+See `Kana Mapping Table <https://jamorasep.readthedocs.io/en/latest/kanamap.html>`_ for the full mapping of each output format.

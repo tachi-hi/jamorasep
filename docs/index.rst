@@ -10,5 +10,7 @@ Welcome to jamorasep's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   kanamap
+
 .. automodule:: jamorasep
    :members:
