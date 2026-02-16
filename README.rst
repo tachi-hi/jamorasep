@@ -40,9 +40,19 @@ Code Example
 
 .. code-block:: python
 
-   # import
    import jamorasep
+
+   jamorasep.parse("シャンプーハット")
+   # => ['シャ', 'ン', 'プ', 'ー', 'ハ', 'ッ', 'ト']
+
    jamorasep.parse("シャンプーハット", output_format="katakana")
+   # => ['シャ', 'ン', 'プ', 'ー', 'ハ', 'ッ', 'ト']
+
    jamorasep.parse("シャンプーハット", output_format="simple-ipa")
+   # => ['ɕa', 'N', 'pu', ':', 'ha', 'Q', 'to']
+
    jamorasep.parse("シャンプーハット", output_format="kunrei")
+   # => ['sya', 'n', 'pu', ':', 'ha', 't', 'to']
+
    jamorasep.parse("シャンプーハット", output_format="hepburn")
+   # => ['sha', 'n', 'pu', ':', 'ha', 't', 'to']
